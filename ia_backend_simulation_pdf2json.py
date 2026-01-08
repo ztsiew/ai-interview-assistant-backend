@@ -19,7 +19,7 @@ from pypdf import PdfReader  # pip install pypdf
 # CONFIGURATION
 # ---------------------------------------------------------
 USE_SIMULATION = True 
-SIMULATION_FILE_PATH = r"C:\Users\ZhiTao\OneDrive - Monash University\MAI Research\Python\MAIR - Session 3 - trimmed.m4a"
+SIMULATION_FILE_PATH = r"C:\Users\ZhiTao\OneDrive - Monash University\MAI Research\Python\ai-interview-assistant-backend\MAIR - Session 3 - trimmed.m4a"
 SIMULATION_DELAY = 1 
 SAMPLE_RATE = 16000
 WINDOW_SIZE_FOLLOW_UP = 8
