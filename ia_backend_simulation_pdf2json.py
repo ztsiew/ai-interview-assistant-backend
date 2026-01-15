@@ -13,7 +13,7 @@ import json
 import uvicorn
 import time
 import io
-from pypdf import PdfReader  # pip install pypdf
+from pypdf import PdfReader
 
 # ---------------------------------------------------------
 # CONFIGURATION
@@ -22,10 +22,11 @@ USE_SIMULATION = True
 SIMULATION_FILE_PATH = r"C:\Users\ZhiTao\OneDrive - Monash University\MAI Research\Python\ai-interview-assistant-backend\MAIR - Session 3 - trimmed.m4a"
 SIMULATION_DELAY = 1 
 SAMPLE_RATE = 16000
+BATCH_SECS = 15
 WINDOW_SIZE_FOLLOW_UP = 8
 WINDOW_SIZE_TRANSITION = 2
 WINDOW_SIZE_EMPATHY = 4
-BATCH_SECS = 15
+
 
 app = FastAPI()
 
@@ -53,9 +54,11 @@ class InterviewSession:
         # Default empty structure until PDF is uploaded
         self.interview_plan = {"interview_guides_collection": []} 
         self.system_identity = (
-            "You are a qualitative research assistant. The interview transcripts do "
-            "not have speaker labels and punctuation. You should still interpret the "
-            "dialogue correctly by inferring interviewer and interviewee turns internally."
+            """You are a qualitative research assistant. The interview transcripts do
+            not have speaker labels and punctuation. You should still interpret the
+            dialogue correctly by inferring interviewer and interviewee turns internally.
+            If priority instructions are given, you must follow them strictly and may disgerard
+            any conflicting default instructions that follow below."""
         )
         self.custom_prompt = ""
         self.latest_transcript = ""
@@ -83,12 +86,12 @@ def analyze_chunk(context, transcript, sys_prompt):
         return "Waiting..."
 
     if sys_prompt.strip():
-        priority_directive = f"### CRITICAL PRIORITY INSTRUCTIONS:\n{sys_prompt}\n\n---\n"
+        priority_instruction = f"### CRITICAL PRIORITY INSTRUCTIONS:\n{sys_prompt} \n\n"
     else:
-        priority_directive = ""
+        priority_instruction = f"N/A \n\n"
 
     system_content = (
-        f"{priority_directive}"
+        f"{priority_instruction}"
         f"{session.system_identity}\n\n"
         f"INTERVIEW CONTEXT & GUIDELINES:\n{context}"
     )
@@ -139,7 +142,7 @@ def run_ai_analysis():
     - Do NOT include any extra explanation or notes.
     - Do NOT ADD references question.
     - No square brackets [] in output.
-    - **Note:** Prioritize any 'New Instructions' provided in the system context over these default instructions if they conflict.
+    - **IMPORTANT:** Prioritize any 'New Instructions' provided in the system content over these default instructions if they conflict.
     """
 
     session.analysis_followup = analyze_chunk(
@@ -156,18 +159,19 @@ def run_ai_analysis():
     2. Identify the IMMEDIATE NEXT theme title and its FIRST question only.
     3. Write ONE smooth conversational transition that bridges them.
 
+    Example Output:
+    **Current Topic:** [Current theme title]
+
+    **Transition:** [Conversational bridge sentence + next theme’s first question]
+
+    
     STRICT RULES:
     - Theme title = title only (max 6 words).
     - DO NOT include question lists, evidence, quotes from the plan, arrays, brackets, or JSON.
     - DO NOT explain your reasoning.
     - DO NOT output anything outside the format.
-    - **Note:** Follow any 'New Instructions' provided in the system header regarding transition tone or style.
+    **IMPORTANT:** Prioritize any 'New Instructions' provided in the system content regarding transition tone or style over these default instructions if they conflict.
 
-    STRICT OUTPUT FORMAT (Markdown only):
-
-    **Current Topic:** "There must be an empty line here."
-    **Transition:**
-    [Conversational bridge sentence + next theme’s first question]
     """
     
     session.analysis_transition = analyze_chunk(
@@ -182,7 +186,7 @@ def run_ai_analysis():
     If None, 'Status: Normal'. 
     Else brief empathetic response.
     Keep it short, our goal here is to achieve empathy neutrality and calm interviewee down while we continue.
-    **Note:** Adjust your response style based on any 'New Instructions' provided.
+    **IMPORTANT:** Prioritize any 'New Instructions' provided in the system content regarding your response style these default instructions if they conflict.
     """
 
     session.analysis_empathy = analyze_chunk(
