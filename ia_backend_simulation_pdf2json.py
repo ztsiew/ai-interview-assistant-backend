@@ -19,12 +19,12 @@ from pypdf import PdfReader
 # CONFIGURATION
 # ---------------------------------------------------------
 USE_SIMULATION = True 
-SIMULATION_FILE_PATH = r"C:\Users\ZhiTao\OneDrive - Monash University\MAI Research\Python\ai-interview-assistant-backend\MAIR - Session 3 - trimmed.m4a"
+SIMULATION_FILE_PATH = r"C:\Users\ZhiTao\OneDrive - Monash University\MAI Research\Python\ai-interview-assistant-backend\MAIR - WoOz Session 3 - trimmed.m4a"
 SIMULATION_DELAY = 1 
 SAMPLE_RATE = 16000
-BATCH_SECS = 15
-WINDOW_SIZE_FOLLOW_UP = 8
-WINDOW_SIZE_TRANSITION = 2
+BATCH_SECS = 10
+WINDOW_SIZE_FOLLOW_UP = 9
+WINDOW_SIZE_TRANSITION = 3
 WINDOW_SIZE_EMPATHY = 4
 
 
